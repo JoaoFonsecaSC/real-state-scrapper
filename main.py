@@ -22,7 +22,7 @@ def wait_time():
     time.sleep(2)
 
 
-titles, addresses, measures, prices, condo_prices, taxes, links = [], [], [], [], [], [], []
+titles, addresses, measures, prices, condo_prices, taxes, links, beds = [], [], [], [], [], [], [], []
 
 def get_data():
     cards = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'li[data-cy="rp-property-cd"]')))
@@ -33,6 +33,8 @@ def get_data():
         addresses.append(card.find_element(By.CSS_SELECTOR, 'a').get_attribute('title').split(" em ")[-1].strip())
         
         measures.append(card.find_element(By.CSS_SELECTOR, '[data-cy="rp-cardProperty-propertyArea-txt"]').text)
+
+        beds.append(card.find_element(By.CSS_SELECTOR, '[data-cy="rp-cardProperty-bedroomQuantity-txt"]').text)
         
         links.append(card.find_element(By.CSS_SELECTOR, 'a').get_attribute("href"))
         
@@ -66,6 +68,7 @@ for page in range(total_pages):
 df_rents_info = pd.DataFrame({
         'Title': titles,
         'Area': measures,
+        'Beds': beds,
         'Address': addresses,
         'Price': prices,
         'Condo': condo_prices,
@@ -73,6 +76,6 @@ df_rents_info = pd.DataFrame({
         'Link': links
     })
 
-df_rents_info.to_csv('rents_info.csv',sep=';',index=False)
+df_rents_info.to_csv('rents_info.csv', sep=';', index=False, encoding='utf-8-sig')
 
 driver.quit()
