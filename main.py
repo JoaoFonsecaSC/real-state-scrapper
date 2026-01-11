@@ -2,21 +2,26 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+wait = WebDriverWait(driver, 10)
 driver.get('https://www.vivareal.com.br/aluguel/santa-catarina/sao-jose/apartamento_residencial/?transacao=aluguel&onde=%2CSanta+Catarina%2CS%C3%A3o+Jos%C3%A9%2C%2C%2C%2C%2Ccity%2CBR%3ESanta+Catarina%3ENULL%3ESao+Jose%2C-27.59504%2C-48.613768%2C&tipos=apartamento_residencial')
 
-
-time.sleep(10)
-driver.execute_script("window.scrollTo(0, 1000);")
-time.sleep(2)
 
 titles, addresses, measures, prices, condo_prices, taxes, links = [], [], [], [], [], [], []
 
 
-cards = driver.find_elements(By.CSS_SELECTOR, 'li[data-cy="rp-property-cd"]')
+time.sleep(5)
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+time.sleep(3) 
+driver.execute_script("window.scrollTo(0, 0);")
+time.sleep(2)
+
+cards = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'li[data-cy="rp-property-cd"]')))
 
 
 for card in cards:
