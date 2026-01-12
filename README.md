@@ -47,16 +47,13 @@ Python 3.x
 Requests
 Handles HTTP requests and page retrieval.
 
-BeautifulSoup4
+Selenium
 Parses HTML content and extracts structured data.
 
 Pandas
 Cleans, normalizes, and exports data to CSV.
 
-Optional dependency:
 
-Selenium
-Used if JavaScript rendered content is required.
 
 🚀 How to Run
 1. Clone the repository
