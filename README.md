@@ -50,9 +50,6 @@ Handles HTTP requests and page retrieval.
 Selenium
 Parses HTML content and extracts structured data.
 
-Pandas
-Cleans, normalizes, and exports data to CSV.
-
 
 
 🚀 How to Run
