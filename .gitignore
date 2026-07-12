@@ -1,2 +1,14 @@
-*.csv
-.venv
+# Google Cloud Key
+chave-gcp.json
+
+# Python Virtual Environment
+.venv/
+__pycache__/
+
+# Spark/Hadoop logs
+spark-warehouse/
+derby.log
+metastore_db/
+
+# IDE settings
+.vscode/
