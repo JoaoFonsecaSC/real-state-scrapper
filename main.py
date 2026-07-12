@@ -7,13 +7,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.functions import lit
 from urllib.parse import quote_plus
+from datetime import date
 import time
 import os
 
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 
 GCP_KEY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chave-gcp.json")
+
+# Data da coleta — usada para particionar a gravação e preservar o histórico.
+RUN_DATE = date.today()
+GCS_BASE_PATH = "gs://rent_scrapper/raw"
 
 
 CITIES = [
@@ -113,4 +119,15 @@ if data_rows:
     ])
     
     df = spark.createDataFrame(data_rows, schema=schema)
-    df.coalesce(1).write.mode("overwrite").parquet("gs://rent_scrapper/raw/rents_info.parquet")
+    df = df.withColumn("CollectedDate", lit(RUN_DATE.isoformat()))
+
+    # Caminho particionado por data: cada execução grava numa pasta própria,
+    # então o histórico é preservado. Rodar de novo no mesmo dia sobrescreve
+    # apenas a partição daquele dia (idempotente), sem apagar os dias anteriores.
+    output_path = (
+        f"{GCS_BASE_PATH}"
+        f"/year={RUN_DATE.year}"
+        f"/month={RUN_DATE.month:02d}"
+        f"/day={RUN_DATE.day:02d}"
+    )
+    df.coalesce(1).write.mode("overwrite").parquet(output_path)
